@@ -37,3 +37,11 @@
 	color: #9B9B9B;
 	display: block;
 }
+
+.playerform .colorlabel .fieldlabel {
+	width: 85%;
+	padding: 5px 0;
+}
+.playerform .colorlabel .textfield {
+	width: 10%;
+}

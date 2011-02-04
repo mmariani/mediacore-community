@@ -17,7 +17,8 @@ import logging
 from pylons import request
 from tw.forms import CheckBox, PasswordField, RadioButtonList, SingleSelectField
 from tw.forms.fields import ContainerMixin as _ContainerMixin
-from tw.forms.validators import All, FancyValidator, FieldsMatch, Invalid, NotEmpty, PlainText, Schema, StringBool
+from tw.forms.validators import (All, FancyValidator, FieldsMatch, Invalid,
+    NotEmpty, OneOf, PlainText, Regex, Schema, StringBool)
 
 from mediacore.forms import ListFieldSet, ListForm, SubmitButton, ResetButton, TextField
 from mediacore.lib.i18n import N_, _
@@ -26,6 +27,7 @@ from mediacore.plugin import events
 from mediacore.plugin.abc import abstractmethod
 
 log = logging.getLogger(__name__)
+color_validation_regex = "^\w{6}$"
 
 class PlayerPrefsForm(ListForm):
     template = 'admin/box-form.html'
@@ -153,3 +155,52 @@ class YoutubeFlashPlayerPrefsForm(PlayerPrefsForm):
     def save_data(self, player, options, **kwargs):
         for field, value in options.iteritems():
             player.data[field] = int(value)
+
+class JWPlayerPrefsForm(PlayerPrefsForm):
+    fields = [
+        ListFieldSet('options',
+            suppress_label=True,
+            legend=N_('Player Options:'),
+            children=[
+                CheckBox('dock', label_text=N_('Set this to false to show plugin buttons in controlbar. By default, plugin buttons are shown in the display.')),
+                CheckBox('icons', label_text=N_('Set this to false to hide the play button and buffering icons in the display.')),
+                CheckBox('autostart', label_text=N_('Set this to true to automatically start the player on load.')),
+                CheckBox('mute', label_text=N_('Mute sounds on startup.')),
+                CheckBox('shuffle', label_text=N_('Shuffle playback of playlist items')),
+                CheckBox('smoothing', label_text=N_('This sets the smoothing of videos, so you wont see blocks when a video is upscaled. Set this to false to disable the feature and get performance improvements with old computers / big files.')),
+                TextField('backcolor',
+                    label_text=N_('Background color of the controlbar and playlist.'),
+                    container_attrs={'class': 'colorlabel'},
+                    maxlength=6,
+                    validator=Regex(color_validation_regex)),
+                TextField('frontcolor',
+                    label_text=N_('Color of all icons and texts in the controlbar and playlist. Is black by default.'),
+                    container_attrs={'class': 'colorlabel'},
+                    maxlength=6,
+                    validator=Regex(color_validation_regex)),
+                TextField('lightcolour',
+                    label_text=N_('Color of an icon or text when you rollover it with the mouse. Is black by default.'),
+                    container_attrs={'class': 'colorlabel'},
+                    maxlength=6,
+                    validator=Regex(color_validation_regex)),
+                TextField('screencolour',
+                    label_text=N_('Background color of the display. Is black by default.'),
+                    container_attrs={'class': 'colorlabel'},
+                    maxlength=6,
+                    validator=Regex(color_validation_regex)),
+            ],
+            css_classes=['options'],
+        )
+    ] + PlayerPrefsForm.buttons
+
+    def display(self, value, **kwargs):
+        """Display the form with default values from the engine param."""
+        player = kwargs['player']
+        newvalue = {}
+        defaults = {'options': player.data}
+        merge_dicts(newvalue, defaults, value)
+        return PlayerPrefsForm.display(self, newvalue, **kwargs)
+
+    def save_data(self, player, options, **kwargs):
+        for field, value in options.iteritems():
+            player.data[field] = value
