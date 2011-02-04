@@ -719,6 +719,24 @@ class JWPlayer(AbstractHTML5Player):
     display_name = N_(u'JWPlayer')
     """A unicode display name for the class, to be used in the settings UI."""
 
+    settings_form_class = player_forms.JWPlayerPrefsForm
+    """An optional :class:`mediacore.forms.admin.players.PlayerPrefsForm`."""
+
+    # JWPlayer Configuration options as defined here:
+    # http://www.longtailvideo.com/support/jw-player/jw-player-for-flash-v5/12536/configuration-options
+    default_data = {
+        'dock': True,
+        'icons': True,
+        'autostart': False,
+        'mute': False,
+        'shuffle': False,
+        'smoothing': True,
+        'backcolor': '#ffffff',
+        'frontcolor': '#000000',
+        'lightcolor': '#000000',
+        'screencolor': '#000000',
+    }
+
     supported_containers = AbstractHTML5Player.supported_containers \
                          | AbstractRTMPFlashPlayer.supported_containers \
                          | set(['xml', 'srt'])
@@ -755,7 +773,6 @@ class JWPlayer(AbstractHTML5Player):
     def player_vars(self):
         """Return a python dict of vars for this player."""
         vars = {
-            'autostart': self.autoplay,
             'height': self.adjusted_height,
             'width': self.adjusted_width,
             'controlbar': 'bottom',
@@ -766,6 +783,8 @@ class JWPlayer(AbstractHTML5Player):
                 {'type': 'download'},
             ],
         }
+        vars.update(self.data)
+
         playlist = self.playlist()
         plugins = self.plugins()
         if playlist:
