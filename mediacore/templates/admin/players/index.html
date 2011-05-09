@@ -71,6 +71,7 @@
 					</td>
 					<td headers="h-display_name">
 						<a href="${h.url_for(action='edit', id=player.id)}" py:content="_(player.display_name)" py:strip="not player.settings_form">Display Name</a>
+						<span py:if="player.player_cls.licence" class="licence" title="${_('licence')}">(${player.player_cls.licence})</span>
 					</td>
 					<td headers="h-priority" style="text-align:center">
 						<form class="arrows" action="${h.url_for(action='reorder', id=player.id)}" method="post">

@@ -65,6 +65,12 @@ class AbstractPlayer(AbstractClass):
     not be shown in our player control bar.
     """
 
+    licence = None
+    """An optional unicode string, :class:`markupsafe.Markup`, or
+    :class:`mediacore.lib.xhtml.builder.Element` object that describes the
+    licence under which this player is released.
+    """
+
     @abstractmethod
     def can_play(cls, uris):
         """Test all the given URIs to see if they can be played by this player.
@@ -274,6 +280,9 @@ class FlowPlayer(AbstractFlashPlayer):
     """A unicode display name for the class, to be used in the settings UI."""
 
     supported_schemes = set([HTTP])
+
+    licence = Element('a', N_('Modified GPLv3'),
+          href='http://flowplayer.org/download/license_gpl.htm')
 
     def swf_url(self):
         """Return the flash player URL."""
@@ -673,6 +682,8 @@ class HTML5PlusFlowPlayer(AbstractHTML5Player):
     supported_schemes = HTML5Player.supported_schemes \
                       | FlowPlayer.supported_schemes
 
+    licence = FlowPlayer.licence
+
     def __init__(self, media, uris, **kwargs):
         super(HTML5PlusFlowPlayer, self).__init__(media, uris, **kwargs)
         self.flowplayer = None
@@ -725,6 +736,9 @@ class JWPlayer(AbstractHTML5Player):
 #    supported_containers.add('youtube')
     supported_types = set([AUDIO, VIDEO, AUDIO_DESC, CAPTIONS])
     supported_schemes = set([HTTP, RTMP])
+
+    licence = Element('a', N_('Creative Commons Non-Commercial'),
+          href='http://creativecommons.org/licenses/by-nc-sa/3.0/')
 
     # Height adjustment in pixels to accomodate the control bar and stay 16:9
     _height_diff = 24
@@ -880,6 +894,8 @@ class SublimePlayer(AbstractHTML5Player):
     Setting this to False ensures that the resize (expand/shrink) controls will
     not be shown in our player control bar.
     """
+
+    licence = Element('a', 'Commercial', href='http://sublimevideo.net/plans')
 
     def html5_attrs(self):
         attrs = super(SublimePlayer, self).html5_attrs()
