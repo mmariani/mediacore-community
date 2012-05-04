@@ -803,7 +803,7 @@ msgstr "Mostra logo"
 
 #: mediacore/forms/admin/settings.py:366
 msgid "Display Background Image"
-msgstr "Immagine si sfondo"
+msgstr "Immagine di sfondo"
 
 #: mediacore/forms/admin/settings.py:370
 msgid "Display MediaCore Footer"
