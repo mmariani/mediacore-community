@@ -27,12 +27,15 @@ from mediacore.config.routing import login_form_url, login_handler_url, logout_h
 from mediacore.model.meta import DBSession
 from mediacore.model import Group, Permission, User
 
-__all__ = ['add_auth', 'classifier_for_flash_uploads']
+from paste.deploy.converters import asbool
 
 try:
     from redturtle.mcore.security import TokenAuth
 except ImportError:
     pass
+
+
+__all__ = ['add_auth', 'classifier_for_flash_uploads']
 
 
 def add_auth(app, config):
