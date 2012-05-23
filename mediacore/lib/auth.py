@@ -29,8 +29,23 @@ from mediacore.model import Group, Permission, User
 
 __all__ = ['add_auth', 'classifier_for_flash_uploads']
 
+try:
+    from redturtle.mcore.security import TokenAuth
+except ImportError:
+    pass
+
+
 def add_auth(app, config):
     """Add authentication and authorization middleware to the ``app``."""
+    if asbool(config.get('token_secret', 'false')):
+        token_secret = config['token_secret.cookie_secret']
+        token_auth = TokenAuth(token_secret)
+        kwargs = dict(
+            identifiers = [('auth_token', token_auth),],
+            authenticators = [('auth_token', token_auth),],
+        )
+    else:
+        kwargs = {}
     return setup_sql_auth(
         app, User, Group, Permission, DBSession,
 
@@ -58,7 +73,9 @@ def add_auth(app, config):
         # The salt used to encrypt auth cookie data. This value must be unique
         # to each deployment so it comes from the INI config file and is
         # randomly generated when you run paster make-config
-        cookie_secret = config['sa_auth.cookie_secret']
+        cookie_secret = config['sa_auth.cookie_secret'],
+
+        **kwargs
     )
 
 
