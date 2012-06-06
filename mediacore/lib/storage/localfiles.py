@@ -7,6 +7,8 @@ import os
 from shutil import copyfileobj
 from urlparse import urlunsplit
 
+import hachoir_parser
+import hachoir_metadata
 from pylons import config
 
 from mediacore.forms.admin.storage.localfiles import LocalFileStorageForm
@@ -54,6 +56,8 @@ class LocalFileStorage(FileStorageEngine):
         copyfileobj(temp_file, permanent_file)
         temp_file.close()
         permanent_file.close()
+
+        meta['duration'] = self._parse_duration(permanent_file.name)
 
         return file_name
 
@@ -112,5 +116,16 @@ class LocalFileStorage(FileStorageEngine):
         if not basepath:
             basepath = config['media_dir']
         return os.path.join(basepath, unique_id)
+
+    def _parse_duration(self, file_path):
+        parser = hachoir_parser.createParser(unicode(file_path), str(file_path))
+        metadata = hachoir_metadata.extractMetadata(parser)
+        for item in metadata:
+            if item.description == 'Duration':
+                try:
+                    return item.values[0].value.seconds
+                except (IndexError, AttributeError):
+                    return 0
+        return 0
 
 FileStorageEngine.register(LocalFileStorage)

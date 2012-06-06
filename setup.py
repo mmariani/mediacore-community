@@ -39,6 +39,8 @@ install_requires = [
     'unidecode',
     'decorator',
     'simplejson',
+    'hachoir_metadata == 1.3.3',
+    'hachoir_parser == 1.3.4',
 ]
 
 if sys.version_info < (2, 7):
