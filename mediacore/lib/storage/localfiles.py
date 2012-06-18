@@ -7,6 +7,7 @@ import os
 from shutil import copyfileobj
 from urlparse import urlunsplit
 
+import kaa.metadata
 from pylons import config
 
 from mediacore.forms.admin.storage.localfiles import LocalFileStorageForm
@@ -54,6 +55,8 @@ class LocalFileStorage(FileStorageEngine):
         copyfileobj(temp_file, permanent_file)
         temp_file.close()
         permanent_file.close()
+
+        meta['duration'] = self._parse_duration(permanent_file.name)
 
         return file_name
 
@@ -112,5 +115,9 @@ class LocalFileStorage(FileStorageEngine):
         if not basepath:
             basepath = config['media_dir']
         return os.path.join(basepath, unique_id)
+
+    def _parse_duration(self, file_path):
+        meta = kaa.metadata.parse(file_path)
+        return meta.get('length', 0)
 
 FileStorageEngine.register(LocalFileStorage)
