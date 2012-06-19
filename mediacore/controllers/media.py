@@ -319,7 +319,7 @@ class MediaController(BaseController):
         """Serve a :class:`~mediacore.model.media.MediaFile` binary.
 
         :param id: File ID
-        :type id: ``int``.
+        :type id: ``int``
         :param bool download: If true, serve with an Content-Disposition that
             makes the file download to the users computer instead of playing
             in the browser.
