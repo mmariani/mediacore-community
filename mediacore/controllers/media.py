@@ -319,7 +319,7 @@ class MediaController(BaseController):
         """Serve a :class:`~mediacore.model.media.MediaFile` binary.
 
         :param id: File ID
-        :type id: ``int``. If zero, returns the first file for the slug.
+        :type id: ``int``.
         :param bool download: If true, serve with an Content-Disposition that
             makes the file download to the users computer instead of playing
             in the browser.
@@ -329,10 +329,7 @@ class MediaController(BaseController):
             match, then a 406 (not acceptable) response is returned.
 
         """
-        if str(id) == '0':
-            file = fetch_row(Media, slug=kwargs['slug']).files[0]
-        else:
-            file = fetch_row(MediaFile, id=id)
+        file = fetch_row(MediaFile, id=id)
 
         file_type = file.mimetype.encode('utf-8')
         file_name = file.display_name.encode('utf-8')
