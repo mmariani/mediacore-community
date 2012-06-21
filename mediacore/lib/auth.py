@@ -29,10 +29,6 @@ from mediacore.model import Group, Permission, User
 
 from paste.deploy.converters import asbool
 
-try:
-    from redturtle.mcore.security import TokenAuth
-except ImportError:
-    pass
 
 
 __all__ = ['add_auth', 'classifier_for_flash_uploads']
@@ -41,6 +37,7 @@ __all__ = ['add_auth', 'classifier_for_flash_uploads']
 def add_auth(app, config):
     """Add authentication and authorization middleware to the ``app``."""
     if asbool(config.get('token_secret', 'false')):
+        from redturtle.mcore.security import TokenAuth
         token_secret = config['token_secret.cookie_secret']
         token_auth = TokenAuth(token_secret)
         kwargs = dict(
