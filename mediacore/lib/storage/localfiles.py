@@ -120,6 +120,8 @@ class LocalFileStorage(FileStorageEngine):
     def _parse_duration(self, file_path):
         parser = hachoir_parser.createParser(unicode(file_path), str(file_path))
         metadata = hachoir_metadata.extractMetadata(parser)
+        if not metadata:    # not a media, or not recognized
+            return 0
         for item in metadata:
             if item.description == 'Duration':
                 try:
