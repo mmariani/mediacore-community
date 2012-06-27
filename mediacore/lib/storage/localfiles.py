@@ -118,6 +118,10 @@ class LocalFileStorage(FileStorageEngine):
 
     def _parse_duration(self, file_path):
         meta = kaa.metadata.parse(file_path)
-        return meta.get('length', 0)
+        if meta is None:
+            # extra caution, the file has disappeared
+            # or kaa.metadata.create() has failed
+            return None
+        return meta.get('length', None)
 
 FileStorageEngine.register(LocalFileStorage)
